@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decade Dance - Transform Your Photos Into Retro Club Magic</title>
+    <meta name="description" content="Upload a photo and transform it into a groovy 60s, funky 70s, or neon 80s dance club scene using AI.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --dark-pink: #d9365e;
+            --hot-pink: #ff2d6a;
+            --magenta: #e91e8c;
+            --neon-green: #39ff14;
+            --neon-lime: #7fff00;
+            --neon-blue: #00d4ff;
+            --neon-purple: #b347ff;
+            --dark-bg: #0a0a12;
+            --card-bg: #12121f;
+            --text-primary: #ffffff;
+            --text-muted: #9999aa;
+            --error-red: #ff4757;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sparkle-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 2; overflow: hidden;
+        }
+
+        .sparkle {
+            position: absolute; width: 4px; height: 4px; border-radius: 50%;
+            animation: sparkle-float 8s ease-in-out infinite;
+        }
+        .sparkle::before, .sparkle::after {
+            content: ''; position: absolute; background: inherit;
+        }
+        .sparkle::before {
+            width: 200%; height: 2px; top: 50%; left: -50%; transform: translateY(-50%);
+        }
+        .sparkle::after {
+            height: 200%; width: 2px; left: 50%; top: -50%; transform: translateX(-50%);
+        }
+
+        @keyframes sparkle-float {
+            0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+            10% { opacity: 1; transform: translateY(-20px) scale(1); }
+            50% { opacity: 0.8; transform: translateY(-100px) scale(0.8); }
+            90% { opacity: 0.3; transform: translateY(-200px) scale(0.3); }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .bg-effects {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+
+        .grid-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60%;
+            background: 
+                linear-gradient(transparent 0%, var(--dark-bg) 100%),
+                repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(217, 54, 94, 0.15) 80px, rgba(217, 54, 94, 0.15) 81px),
+                repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(57, 255, 20, 0.1) 80px, rgba(57, 255, 20, 0.1) 81px);
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: bottom;
+            animation: gridPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
+
+        .glow-orb {
+            position: absolute; border-radius: 50%; filter: blur(80px);
+            animation: float 8s ease-in-out infinite;
+        }
+        .glow-orb.pink1 { width: 350px; height: 350px; background: var(--dark-pink); opacity: 0.18; top: 5%; right: 10%; }
+        .glow-orb.pink2 { width: 280px; height: 280px; background: var(--hot-pink); opacity: 0.12; top: 50%; left: 5%; animation-delay: -2s; }
+        .glow-orb.pink3 { width: 200px; height: 200px; background: var(--magenta); opacity: 0.1; bottom: 10%; right: 30%; animation-delay: -5s; }
+        .glow-orb.green1 { width: 320px; height: 320px; background: var(--neon-green); opacity: 0.12; top: 30%; right: 25%; animation-delay: -3s; }
+        .glow-orb.green2 { width: 250px; height: 250px; background: var(--neon-lime); opacity: 0.1; bottom: 20%; left: 15%; animation-delay: -4s; }
+        .glow-orb.blue { width: 180px; height: 180px; background: var(--neon-blue); opacity: 0.08; top: 70%; right: 5%; animation-delay: -1s; }
+
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -30px); } }
+
+        .container { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        header { text-align: center; padding: 3rem 0; position: relative; }
+
+        .logo {
+            font-family: 'Dela Gothic One', cursive;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            background: linear-gradient(135deg, var(--hot-pink), var(--neon-green), var(--dark-pink));
+            background-size: 200% 200%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: -0.02em;
+            animation: logoGradient 5s ease-in-out infinite, logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGradient { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(217, 54, 94, 0.5)) drop-shadow(0 0 40px rgba(57, 255, 20, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(57, 255, 20, 0.5)) drop-shadow(0 0 60px rgba(217, 54, 94, 0.4)); }
+        }
+
+        .header-sparkles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .star { position: absolute; animation: twinkle 2s ease-in-out infinite; }
+        .star svg { width: 20px; height: 20px; }
+
+        .tagline { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.5rem; letter-spacing: 0.3em; text-transform: uppercase; }
+        .tagline .highlight-pink { color: var(--hot-pink); text-shadow: 0 0 10px rgba(255, 45, 106, 0.5); }
+        .tagline .highlight-green { color: var(--neon-green); text-shadow: 0 0 10px rgba(57, 255, 20, 0.5); }
+
+        .app-section {
+            margin: 4rem 0; padding: 2rem;
+            background: rgba(18, 18, 31, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; backdrop-filter: blur(10px);
+            position: relative; overflow: hidden;
+        }
+        .app-section::before {
+            content: ''; position: absolute; top: -1px; left: 20%; right: 20%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--dark-pink), var(--neon-green), transparent);
+            opacity: 0.6;
+        }
+
+        .section-label {
+            font-size: 0.7rem; letter-spacing: 0.2em; color: var(--hot-pink);
+            text-transform: uppercase; margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-label::before {
+            content: '✦'; font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--hot-pink), var(--neon-green));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(217, 54, 94, 0.4); border-radius: 16px;
+            padding: 4rem 2rem; text-align: center; cursor: pointer;
+            position: relative; overflow: hidden;
+            background: radial-gradient(ellipse at center, rgba(217, 54, 94, 0.03) 0%, transparent 70%);
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--hot-pink);
+            background: radial-gradient(ellipse at center, rgba(217, 54, 94, 0.08) 0%, rgba(57, 255, 20, 0.03) 70%);
+            box-shadow: 0 0 40px rgba(217, 54, 94, 0.15);
+        }
+        .upload-zone.has-image { padding: 1rem; }
+        .upload-zone::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(217, 54, 94, 0.1), rgba(57, 255, 20, 0.05), transparent);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer { 100% { left: 100%; } }
+
+        .upload-sparkles { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; color: var(--hot-pink); animation: twinkle 2s ease-in-out infinite; }
+        .upload-sparkles-left { position: absolute; bottom: 1rem; left: 1rem; font-size: 1.2rem; color: var(--neon-green); animation: twinkle 2s ease-in-out infinite 0.5s; }
+
+        .upload-content { position: relative; z-index: 1; }
+
+        .upload-icon {
+            width: 80px; height: 80px; margin: 0 auto 1.5rem;
+            border: 2px solid var(--hot-pink); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+            background: linear-gradient(135deg, rgba(217, 54, 94, 0.1), rgba(57, 255, 20, 0.1));
+            box-shadow: 0 0 30px rgba(217, 54, 94, 0.3), 0 0 60px rgba(57, 255, 20, 0.2);
+            position: relative;
+        }
+        .upload-icon::after {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            border: 1px solid rgba(217, 54, 94, 0.3);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+
+        .upload-text { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .upload-hint { font-size: 0.8rem; color: var(--text-muted); }
+        .upload-input { display: none; }
+
+        .image-preview-container { display: none; position: relative; }
+        .image-preview-container.visible { display: block; }
+        .image-preview { max-width: 100%; max-height: 400px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
+
+        .remove-image-btn {
+            position: absolute; top: -10px; right: -10px; width: 32px; height: 32px;
+            border-radius: 50%; background: var(--dark-pink); border: 2px solid var(--dark-bg);
+            color: white; font-size: 1.2rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; z-index: 10;
+        }
+        .remove-image-btn:hover { background: var(--hot-pink); transform: scale(1.1); }
+
+        .decade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1rem; }
+
+        .decade-card {
+            position: relative; padding: 2rem 1.5rem; border-radius: 16px;
+            text-align: center; cursor: pointer; overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .decade-card::before {
+            content: ''; position: absolute; inset: 0; border-radius: 16px; padding: 2px;
+            background: linear-gradient(135deg, var(--card-color), transparent);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            opacity: 0.5; transition: opacity 0.3s;
+        }
+        .decade-card:hover::before { opacity: 1; }
+        .decade-card.sixties { --card-color: var(--hot-pink); background: linear-gradient(135deg, rgba(255, 45, 106, 0.15), rgba(217, 54, 94, 0.05)); }
+        .decade-card.seventies { --card-color: var(--neon-green); background: linear-gradient(135deg, rgba(57, 255, 20, 0.12), rgba(127, 255, 0, 0.05)); }
+        .decade-card.eighties { --card-color: var(--magenta); background: linear-gradient(135deg, rgba(233, 30, 140, 0.15), rgba(179, 71, 255, 0.05)); }
+        .decade-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); }
+        .decade-card.selected { transform: translateY(-4px); }
+        .decade-card.sixties.selected { box-shadow: 0 0 40px rgba(255, 45, 106, 0.4); }
+        .decade-card.seventies.selected { box-shadow: 0 0 40px rgba(57, 255, 20, 0.4); }
+        .decade-card.eighties.selected { box-shadow: 0 0 40px rgba(233, 30, 140, 0.4); }
+
+        .decade-card .card-sparkle {
+            position: absolute; top: 0.5rem; left: 0.5rem; font-size: 0.8rem;
+            opacity: 0; transition: opacity 0.3s; color: var(--card-color);
+        }
+        .decade-card.selected .card-sparkle, .decade-card:hover .card-sparkle {
+            opacity: 1; animation: twinkle 1s ease-in-out infinite;
+        }
+
+        .decade-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .decade-year { font-family: 'Dela Gothic One', cursive; font-size: 2rem; color: var(--card-color); margin-bottom: 0.5rem; text-shadow: 0 0 20px currentColor; }
+        .decade-vibe { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .decade-check {
+            position: absolute; top: 1rem; right: 1rem; width: 24px; height: 24px;
+            border-radius: 50%; background: var(--card-color);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transform: scale(0.5); transition: all 0.3s;
+            box-shadow: 0 0 15px currentColor; color: var(--dark-bg); font-size: 0.8rem; font-weight: bold;
+        }
+        .decade-card.selected .decade-check { opacity: 1; transform: scale(1); }
+
+        .custom-prompt-section { margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .prompt-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+        .prompt-label {
+            font-size: 0.75rem; letter-spacing: 0.15em; color: var(--neon-green);
+            text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .prompt-label::before { content: '✦'; color: var(--hot-pink); animation: twinkle 2s ease-in-out infinite; }
+        .prompt-optional {
+            font-size: 0.65rem; color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05); padding: 0.25rem 0.6rem;
+            border-radius: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .prompt-input-wrapper { position: relative; }
+        .prompt-input {
+            width: 100%; background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px;
+            padding: 1rem 1.25rem; padding-right: 3rem;
+            font-family: 'Space Mono', monospace; font-size: 0.9rem;
+            color: var(--text-primary); resize: none; min-height: 80px;
+            transition: all 0.3s ease;
+        }
+        .prompt-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+        .prompt-input:focus {
+            outline: none; border-color: transparent; background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 2px var(--dark-pink), 0 0 20px rgba(217, 54, 94, 0.2), 0 0 40px rgba(57, 255, 20, 0.1);
+        }
+        .prompt-sparkle {
+            position: absolute; right: 1rem; top: 1rem; font-size: 1.2rem;
+            color: var(--neon-green); opacity: 0.5; animation: twinkle 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .prompt-suggestions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 0.4rem 0.8rem; font-size: 0.7rem;
+            color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;
+        }
+        .suggestion-chip:hover { background: rgba(217, 54, 94, 0.15); border-color: var(--dark-pink); color: var(--hot-pink); }
+        .suggestion-chip:nth-child(even):hover { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-green); color: var(--neon-green); }
+        .suggestion-chip .chip-icon { margin-right: 0.3rem; }
+
+        .transform-section { margin-top: 2rem; text-align: center; }
+
+        .preview-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+        .preview-box {
+            aspect-ratio: 1; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; min-height: 300px;
+        }
+        .preview-box.original { background: linear-gradient(135deg, #1a1a2e, #16162a); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .preview-box.original.has-image { aspect-ratio: auto; }
+        .preview-box.edited {
+            background: linear-gradient(135deg, rgba(217, 54, 94, 0.08), rgba(57, 255, 20, 0.05));
+            border: 2px solid transparent; background-clip: padding-box; position: relative;
+        }
+        .preview-box.edited::before {
+            content: ''; position: absolute; inset: -2px; border-radius: 18px;
+            background: linear-gradient(135deg, var(--hot-pink), var(--neon-green), var(--dark-pink));
+            z-index: -1; animation: borderGlow 3s linear infinite;
+        }
+        .preview-box.edited.has-image { aspect-ratio: auto; }
+        @keyframes borderGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+
+        .preview-label {
+            position: absolute; top: 1rem; left: 1rem; font-size: 0.7rem;
+            letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 0.8rem;
+            background: rgba(0, 0, 0, 0.5); border-radius: 20px; backdrop-filter: blur(10px);
+            display: flex; align-items: center; gap: 0.3rem; z-index: 5;
+        }
+        .preview-label .sparkle-icon { animation: twinkle 1.5s ease-in-out infinite; }
+        .preview-label .sparkle-icon.pink { color: var(--hot-pink); }
+        .preview-label .sparkle-icon.green { color: var(--neon-green); }
+
+        .preview-placeholder { color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 2rem; }
+        .preview-image { max-width: 100%; max-height: 500px; border-radius: 12px; display: block; }
+
+        .processing-overlay {
+            position: absolute; inset: 0; background: rgba(10, 10, 18, 0.9);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 14px; z-index: 10;
+        }
+        .processing-overlay.visible { display: flex; }
+        .processing-spinner {
+            width: 60px; height: 60px; border: 3px solid transparent;
+            border-top-color: var(--hot-pink); border-right-color: var(--neon-green); border-bottom-color: var(--dark-pink);
+            border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;
+            box-shadow: 0 0 20px rgba(217, 54, 94, 0.3), 0 0 40px rgba(57, 255, 20, 0.2);
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .processing-text { font-size: 0.85rem; color: var(--text-muted); }
+        .processing-sparkles { position: absolute; font-size: 1.2rem; }
+        .processing-sparkles.pink { color: var(--hot-pink); }
+        .processing-sparkles.green { color: var(--neon-green); }
+
+        .error-message {
+            background: rgba(255, 71, 87, 0.1); border: 1px solid var(--error-red);
+            border-radius: 12px; padding: 1rem; margin-top: 1rem;
+            display: none; align-items: flex-start; gap: 0.75rem;
+        }
+        .error-message.visible { display: flex; }
+        .error-icon { font-size: 1.2rem; flex-shrink: 0; }
+        .error-text { font-size: 0.85rem; color: var(--error-red); }
+
+        .btn {
+            font-family: 'Space Mono', monospace; font-size: 0.9rem;
+            padding: 1rem 2rem; border: none; border-radius: 50px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase; letter-spacing: 0.1em; position: relative; overflow: hidden;
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--hot-pink), var(--neon-green));
+            color: #000; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(217, 54, 94, 0.3), 0 10px 30px rgba(57, 255, 20, 0.2);
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(217, 54, 94, 0.4), 0 15px 40px rgba(57, 255, 20, 0.3);
+        }
+        .btn-primary::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-primary:hover:not(:disabled)::before { left: 100%; }
+        .btn-secondary { background: transparent; color: var(--text-primary); border: 1px solid rgba(217, 54, 94, 0.4); }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--hot-pink); color: var(--hot-pink); box-shadow: 0 0 20px rgba(217, 54, 94, 0.2); }
+        .btn-group { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap; }
+
+        footer { text-align: center; padding: 3rem 0; color: var(--text-muted); font-size: 0.8rem; }
+        .privacy-note {
+            max-width: 500px; margin: 0 auto; padding: 1rem;
+            background: linear-gradient(135deg, rgba(217, 54, 94, 0.05), rgba(57, 255, 20, 0.03));
+            border-radius: 8px; border-left: 2px solid;
+            border-image: linear-gradient(180deg, var(--hot-pink), var(--neon-green)) 1;
+        }
+
+        @media (max-width: 768px) {
+            .preview-container { grid-template-columns: 1fr; }
+            .decade-grid { grid-template-columns: 1fr; }
+            .container { padding: 1rem; }
+            .app-section { padding: 1.5rem; margin: 2rem 0; }
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="sparkle-container" id="sparkles"></div>
+    <div class="bg-effects">
+        <div class="grid-overlay"></div>
+        <div class="glow-orb pink1"></div>
+        <div class="glow-orb pink2"></div>
+        <div class="glow-orb pink3"></div>
+        <div class="glow-orb green1"></div>
+        <div class="glow-orb green2"></div>
+        <div class="glow-orb blue"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-sparkles">
+                <div class="star" style="top: 10%; left: 15%;"><svg viewBox="0 0 24 24" fill="var(--hot-pink)"><polygon points="12,2 15,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 9,9"/></svg></div>
+                <div class="star" style="top: 20%; right: 20%; animation-delay: 0.5s;"><svg viewBox="0 0 24 24" fill="var(--neon-green)" style="width: 16px; height: 16px;"><polygon points="12,2 15,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 9,9"/></svg></div>
+                <div class="star" style="top: 60%; left: 10%; animation-delay: 1s;"><svg viewBox="0 0 24 24" fill="var(--dark-pink)" style="width: 14px; height: 14px;"><polygon points="12,2 15,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 9,9"/></svg></div>
+                <div class="star" style="bottom: 30%; right: 12%; animation-delay: 0.7s;"><svg viewBox="0 0 24 24" fill="var(--neon-lime)" style="width: 18px; height: 18px;"><polygon points="12,2 15,9 22,9 16,14 18,22 12,17 6,22 8,14 2,9 9,9"/></svg></div>
+            </div>
+            <h1 class="logo">DECADE DANCE</h1>
+            <p class="tagline">Transform your photos into <span class="highlight-pink">✦</span> retro <span class="highlight-green">club</span> <span class="highlight-pink">magic</span> <span class="highlight-green">✦</span></p>
+        </header>
+
+        <section class="app-section" id="upload-section">
+            <div class="section-label">Step 1 — Upload Your Photo</div>
+            <div class="upload-zone" id="upload-zone">
+                <span class="upload-sparkles">✦</span>
+                <span class="upload-sparkles-left">✦</span>
+                <div class="upload-content" id="upload-content">
+                    <div class="upload-icon">📸</div>
+                    <p class="upload-text">Drop your photo here or click to browse</p>
+                    <p class="upload-hint">Supports JPG, PNG, WebP • Max 10MB</p>
+                </div>
+                <div class="image-preview-container" id="image-preview-container">
+                    <button class="remove-image-btn" id="remove-image-btn" title="Remove image">×</button>
+                    <img src="" alt="Preview" class="image-preview" id="image-preview">
+                </div>
+                <input type="file" class="upload-input" id="upload-input" accept="image/jpeg,image/png,image/webp">
+            </div>
+        </section>
+
+        <section class="app-section" id="decade-section">
+            <div class="section-label">Step 2 — Pick Your Era</div>
+            <div class="decade-grid">
+                <div class="decade-card sixties" data-decade="60s">
+                    <span class="card-sparkle">✦</span>
+                    <div class="decade-check">✓</div>
+                    <span class="decade-emoji">🌼</span>
+                    <div class="decade-year">'60s</div>
+                    <div class="decade-vibe">Go-Go & Mod</div>
+                </div>
+                <div class="decade-card seventies selected" data-decade="70s">
+                    <span class="card-sparkle">✦</span>
+                    <div class="decade-check">✓</div>
+                    <span class="decade-emoji">🪩</span>
+                    <div class="decade-year">'70s</div>
+                    <div class="decade-vibe">Disco Fever</div>
+                </div>
+                <div class="decade-card eighties" data-decade="80s">
+                    <span class="card-sparkle">✦</span>
+                    <div class="decade-check">✓</div>
+                    <span class="decade-emoji">⚡</span>
+                    <div class="decade-year">'80s</div>
+                    <div class="decade-vibe">Synth-Pop Neon</div>
+                </div>
+            </div>
+
+            <div class="custom-prompt-section">
+                <div class="prompt-header">
+                    <span class="prompt-label">Add Your Own Touch</span>
+                    <span class="prompt-optional">Optional</span>
+                </div>
+                <div class="prompt-input-wrapper">
+                    <textarea class="prompt-input" id="custom-prompt" placeholder="Describe any extra changes you'd like... e.g., 'make me blonde', 'add sunglasses', 'put me on a beach'"></textarea>
+                    <span class="prompt-sparkle">✦</span>
+                </div>
+                <div class="prompt-suggestions" id="prompt-suggestions">
+                    <span class="suggestion-chip" data-suggestion="add sunglasses"><span class="chip-icon">🕶️</span> Add sunglasses</span>
+                    <span class="suggestion-chip" data-suggestion="change hair color to blonde"><span class="chip-icon">💇</span> Change hair color</span>
+                    <span class="suggestion-chip" data-suggestion="beach background"><span class="chip-icon">🌴</span> Beach background</span>
+                    <span class="suggestion-chip" data-suggestion="add more sparkles and glitter"><span class="chip-icon">✨</span> More sparkles</span>
+                    <span class="suggestion-chip" data-suggestion="make colors extra vibrant"><span class="chip-icon">🎨</span> Extra colorful</span>
+                    <span class="suggestion-chip" data-suggestion="nighttime club atmosphere"><span class="chip-icon">🌙</span> Nighttime vibe</span>
+                </div>
+            </div>
+
+            <div class="transform-section">
+                <button class="btn btn-primary" id="transform-btn" disabled>✦ Transform My Photo ✦</button>
+            </div>
+        </section>
+
+        <section class="app-section" id="results-section">
+            <div class="section-label">Step 3 — See The Magic</div>
+            <div class="preview-container">
+                <div class="preview-box original" id="original-preview">
+                    <span class="preview-label">Original</span>
+                    <span class="preview-placeholder" id="original-placeholder">Your uploaded photo appears here</span>
+                    <img src="" alt="Original" class="preview-image hidden" id="original-image">
+                </div>
+                <div class="preview-box edited" id="edited-preview">
+                    <span class="preview-label"><span class="sparkle-icon pink">✦</span> Transformed <span class="sparkle-icon green">✦</span></span>
+                    <span class="preview-placeholder" id="edited-placeholder">Your transformed photo will appear here</span>
+                    <img src="" alt="Transformed" class="preview-image hidden" id="edited-image">
+                    <div class="processing-overlay" id="processing-overlay">
+                        <span class="processing-sparkles pink" style="top: 15%; left: 20%; animation: twinkle 1s infinite;">✦</span>
+                        <span class="processing-sparkles green" style="top: 20%; right: 25%; animation: twinkle 1s infinite 0.3s;">✦</span>
+                        <span class="processing-sparkles pink" style="bottom: 25%; left: 25%; animation: twinkle 1s infinite 0.6s;">✦</span>
+                        <span class="processing-sparkles green" style="bottom: 20%; right: 20%; animation: twinkle 1s infinite 0.9s;">✦</span>
+                        <div class="processing-spinner"></div>
+                        <span class="processing-text" id="processing-text">Creating your '70s look...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="error-message" id="error-message">
+                <span class="error-icon">⚠️</span>
+                <span class="error-text" id="error-text">An error occurred. Please try again.</span>
+            </div>
+            <div class="btn-group" id="result-buttons" style="display: none;">
+                <button class="btn btn-primary" id="download-btn">✦ Download Result</button>
+                <button class="btn btn-secondary" id="retry-btn">↻ Try Another Era</button>
+            </div>
+        </section>
+
+        <footer>
+            <div class="privacy-note">
+                🔒 <strong>Privacy:</strong> Your photos are sent directly to Google's API for processing and are not stored. Images are discarded immediately after transformation.
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Configuration
+        // NOTE: You need a valid Google AI Studio API key (starts with "AIza...")
+        // Get one free at: https://aistudio.google.com/app/apikey
+        // Pass it via URL: index.html?key=YOUR_API_KEY
+        const CONFIG = {
+            API_KEY: 'AIzaSyCFE1RaBFEOwgadhLDZxh6-pEUmbjjhxeo',
+            API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent',
+            MAX_FILE_SIZE: 10 * 1024 * 1024,
+            SUPPORTED_TYPES: ['image/jpeg', 'image/png', 'image/webp']
+        };
+
+        const DECADE_PROMPTS = {
+            '60s': `Transform this portrait into a 1960s dance club scene. Keep the person's face and identity clearly recognizable, but style them with go-go or mod-inspired outfits, bold geometric patterns, and chunky accessories like large sunglasses or hoop earrings. Use psychedelic backgrounds with swirling colors, neon accents, and warm, high-contrast color grading reminiscent of late-60s clubs. Add subtle film grain and vintage lighting while keeping the image fun and energetic. The person should look like they're at a groovy 60s dance party.`,
+            '70s': `Transform this portrait into a 1970s disco club scene. Preserve the subject's face and identity clearly, but dress them in glittery outfits, with era-appropriate styling like afros, feathered hair, or flowing locks. Create a smoky disco interior with a mirror ball, colorful spotlights, and reflections. Apply saturated warm colors (oranges, golds, browns), soft focus, and a slight vignette to create an authentic 70s dance floor vibe. The person should look like a disco star on the dance floor.`,
+            '80s': `Transform this portrait into an 1980s synth-pop nightclub aesthetic. Keep the person clearly recognizable, but add big 80s hair, leather or neon jackets, and bold accessories like chunky jewelry or headbands. Use neon grids, arcade-style decor, laser lights, and retro signage in the background, with blue, magenta, and cyan lighting. Add high-contrast, cool-toned color grading and a fluorescent glow to feel like an 80s new wave dance club. The person should look like they stepped out of an 80s music video.`
+        };
+
+        let state = {
+            uploadedImage: null,
+            uploadedImageBase64: null,
+            selectedDecade: '70s',
+            transformedImage: null,
+            isProcessing: false
+        };
+
+        const elements = {
+            uploadZone: document.getElementById('upload-zone'),
+            uploadInput: document.getElementById('upload-input'),
+            uploadContent: document.getElementById('upload-content'),
+            imagePreviewContainer: document.getElementById('image-preview-container'),
+            imagePreview: document.getElementById('image-preview'),
+            removeImageBtn: document.getElementById('remove-image-btn'),
+            decadeCards: document.querySelectorAll('.decade-card'),
+            customPrompt: document.getElementById('custom-prompt'),
+            suggestionChips: document.querySelectorAll('.suggestion-chip'),
+            transformBtn: document.getElementById('transform-btn'),
+            originalPlaceholder: document.getElementById('original-placeholder'),
+            originalImage: document.getElementById('original-image'),
+            editedPlaceholder: document.getElementById('edited-placeholder'),
+            editedImage: document.getElementById('edited-image'),
+            processingOverlay: document.getElementById('processing-overlay'),
+            processingText: document.getElementById('processing-text'),
+            errorMessage: document.getElementById('error-message'),
+            errorText: document.getElementById('error-text'),
+            resultButtons: document.getElementById('result-buttons'),
+            downloadBtn: document.getElementById('download-btn'),
+            retryBtn: document.getElementById('retry-btn'),
+            originalPreview: document.getElementById('original-preview'),
+            editedPreview: document.getElementById('edited-preview')
+        };
+
+        function createSparkles() {
+            const container = document.getElementById('sparkles');
+            const colors = ['#d9365e', '#ff2d6a', '#e91e8c', '#39ff14', '#7fff00', '#50ff50'];
+            for (let i = 0; i < 35; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.animationDelay = Math.random() * 8 + 's';
+                sparkle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                container.appendChild(sparkle);
+            }
+        }
+
+        function handleFileSelect(file) {
+            if (!CONFIG.SUPPORTED_TYPES.includes(file.type)) {
+                showError('Please upload a JPG, PNG, or WebP image.');
+                return;
+            }
+            if (file.size > CONFIG.MAX_FILE_SIZE) {
+                showError('Image is too large. Please upload an image under 10MB.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                state.uploadedImage = file;
+                state.uploadedImageBase64 = e.target.result.split(',')[1];
+                elements.imagePreview.src = e.target.result;
+                elements.uploadContent.classList.add('hidden');
+                elements.imagePreviewContainer.classList.add('visible');
+                elements.uploadZone.classList.add('has-image');
+                elements.originalImage.src = e.target.result;
+                elements.originalImage.classList.remove('hidden');
+                elements.originalPlaceholder.classList.add('hidden');
+                elements.originalPreview.classList.add('has-image');
+                updateTransformButton();
+                hideError();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            state.uploadedImage = null;
+            state.uploadedImageBase64 = null;
+            elements.imagePreview.src = '';
+            elements.uploadContent.classList.remove('hidden');
+            elements.imagePreviewContainer.classList.remove('visible');
+            elements.uploadZone.classList.remove('has-image');
+            elements.uploadInput.value = '';
+            elements.originalImage.src = '';
+            elements.originalImage.classList.add('hidden');
+            elements.originalPlaceholder.classList.remove('hidden');
+            elements.originalPreview.classList.remove('has-image');
+            updateTransformButton();
+        }
+
+        function selectDecade(decade) {
+            state.selectedDecade = decade;
+            elements.decadeCards.forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.decade === decade) card.classList.add('selected');
+            });
+            updateTransformButton();
+        }
+
+        function handleSuggestionClick(suggestion) {
+            const currentValue = elements.customPrompt.value.trim();
+            elements.customPrompt.value = currentValue ? currentValue + ', ' + suggestion : suggestion;
+            elements.customPrompt.focus();
+        }
+
+        function updateTransformButton() {
+            const hasImage = state.uploadedImage !== null;
+            const hasDecade = state.selectedDecade !== null;
+            elements.transformBtn.disabled = !hasImage || !hasDecade || state.isProcessing;
+        }
+
+        async function transformImage() {
+            if (!CONFIG.API_KEY) {
+                showError('No API key provided. Add ?key=YOUR_API_KEY to the URL. Get a free key at aistudio.google.com');
+                return;
+            }
+            if (!state.uploadedImageBase64 || !state.selectedDecade) {
+                showError('Please upload an image and select a decade.');
+                return;
+            }
+            state.isProcessing = true;
+            updateTransformButton();
+            showProcessing(true);
+            hideError();
+
+            let fullPrompt = DECADE_PROMPTS[state.selectedDecade];
+            const customPromptText = elements.customPrompt.value.trim();
+            if (customPromptText) {
+                fullPrompt += `\n\nAdditional requests from the user: ${customPromptText}`;
+            }
+
+            const requestBody = {
+                contents: [{
+                    parts: [
+                        { text: fullPrompt },
+                        { inline_data: { mime_type: state.uploadedImage.type, data: state.uploadedImageBase64 } }
+                    ]
+                }],
+                generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
+            };
+
+            try {
+                const response = await fetch(`${CONFIG.API_URL}?key=${CONFIG.API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || `API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                let imageData = null;
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    for (const part of data.candidates[0].content.parts) {
+                        if (part.inlineData && part.inlineData.mimeType?.startsWith('image/')) {
+                            imageData = part.inlineData;
+                            break;
+                        }
+                    }
+                }
+
+                if (!imageData) {
+                    throw new Error('No image was generated. The AI may have been unable to process your photo. Please try again.');
+                }
+
+                const resultSrc = `data:${imageData.mimeType};base64,${imageData.data}`;
+                state.transformedImage = resultSrc;
+                elements.editedImage.src = resultSrc;
+                elements.editedImage.classList.remove('hidden');
+                elements.editedPlaceholder.classList.add('hidden');
+                elements.editedPreview.classList.add('has-image');
+                elements.resultButtons.style.display = 'flex';
+
+            } catch (error) {
+                console.error('Transform error:', error);
+                showError(error.message || 'Failed to transform image. Please try again.');
+            } finally {
+                state.isProcessing = false;
+                updateTransformButton();
+                showProcessing(false);
+            }
+        }
+
+        function downloadResult() {
+            if (!state.transformedImage) return;
+            const link = document.createElement('a');
+            link.href = state.transformedImage;
+            link.download = `decade-dance-${state.selectedDecade}-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function retryTransform() {
+            state.transformedImage = null;
+            elements.editedImage.src = '';
+            elements.editedImage.classList.add('hidden');
+            elements.editedPlaceholder.classList.remove('hidden');
+            elements.editedPreview.classList.remove('has-image');
+            elements.resultButtons.style.display = 'none';
+            hideError();
+            document.getElementById('decade-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showProcessing(show) {
+            if (show) {
+                elements.processingOverlay.classList.add('visible');
+                const decadeNames = { '60s': "'60s", '70s': "'70s", '80s': "'80s" };
+                elements.processingText.textContent = `Creating your ${decadeNames[state.selectedDecade]} look...`;
+            } else {
+                elements.processingOverlay.classList.remove('visible');
+            }
+        }
+
+        function showError(message) {
+            elements.errorText.textContent = message;
+            elements.errorMessage.classList.add('visible');
+        }
+
+        function hideError() {
+            elements.errorMessage.classList.remove('visible');
+        }
+
+        function initEventListeners() {
+            elements.uploadZone.addEventListener('click', (e) => {
+                if (e.target !== elements.removeImageBtn && !elements.removeImageBtn.contains(e.target)) {
+                    elements.uploadInput.click();
+                }
+            });
+            elements.uploadInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) handleFileSelect(e.target.files[0]);
+            });
+            elements.uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                elements.uploadZone.classList.add('dragover');
+            });
+            elements.uploadZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                elements.uploadZone.classList.remove('dragover');
+            });
+            elements.uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                elements.uploadZone.classList.remove('dragover');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFileSelect(e.dataTransfer.files[0]);
+            });
+            elements.removeImageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeImage();
+            });
+            elements.decadeCards.forEach(card => {
+                card.addEventListener('click', () => selectDecade(card.dataset.decade));
+            });
+            elements.suggestionChips.forEach(chip => {
+                chip.addEventListener('click', () => handleSuggestionClick(chip.dataset.suggestion));
+            });
+            elements.transformBtn.addEventListener('click', transformImage);
+            elements.downloadBtn.addEventListener('click', downloadResult);
+            elements.retryBtn.addEventListener('click', retryTransform);
+        }
+
+        function init() {
+            createSparkles();
+            initEventListeners();
+            updateTransformButton();
+            
+            // Check for API key in URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const apiKey = urlParams.get('key');
+            if (apiKey) {
+                CONFIG.API_KEY = apiKey;
+            } else {
+                // Show a helpful message if no API key
+                console.log('No API key provided. Add ?key=YOUR_API_KEY to the URL');
+                console.log('Get a free key at: https://aistudio.google.com/app/apikey');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
